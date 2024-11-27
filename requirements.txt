@@ -1,3 +1,4 @@
 pandas
-openai
-dotenv
+openai==0.28
+python-dotenv
+streamlit
