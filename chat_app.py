@@ -7,11 +7,18 @@ if "results" not in st.session_state:
 if "selected_index" not in st.session_state:
     st.session_state["selected_index"] = None
 
+if "need_to_param" not in st.session_state:
+    st.session_state["need_to_param"] = False
+
 st.title("ZIMPL Code Creator AI")
 
 st.write("""
 Enter a description of the optimization problem and the model will generate decisions, objective function, and constraints in ZIMPL.
 """)
+
+need_to_param = st.checkbox("Generate parameterized code", value=st.session_state["need_to_param"])
+
+st.session_state["need_to_param"] = need_to_param
 
 user_input = st.text_area("Describe your problem:", height=150)
 
@@ -19,7 +26,7 @@ if st.button("Generate code in ZIMPL"):
     if user_input.strip():
         with st.spinner("Generating answer..."):
             try:
-                response = generator(user_input)
+                response = generator(user_input, need_to_param)
                 st.success("Code is generated.")
                 st.text_area("Code ZIMPL:", response, height=300)
                 st.session_state["results"].append({

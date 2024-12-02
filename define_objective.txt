@@ -46,3 +46,30 @@ Assistant:
 # Objective function
 maximize f: 5*xS1A + 8*xS1B + 10*xS1C + 6*xS2A + 7*xS2B + 12*xS2C;
 [end example]
+
+[start example]
+User:
+A tailoring workshop makes trousers and jackets. For daily production, it uses two resources: fabric and labor. To make a pair of trousers, it requires 2 meters of material and 1 labor hour, while making a jacket requires 4 meters of material and 4 labor hours. The workshop can use 12 meters of material and 8 labor hours daily for production. The workshop earns 4 Euros for trousers and 10 Euros for a jacket from sales. Create a daily production plan that maximizes profit from sales.
+
+Assistant:
+# Objective function
+maximize f: 4*x1 + 10*x2;
+[end example]
+
+[start example]
+User:
+A doctor wants to combine two food kinds such that the mixture’s vitamin content includes a minimum of 8 elements of vitamin A and ten elements of vitamin C. Food ‘I’ includes 2 vitamin A units per kilogram and 1 vitamin C unit per kilogram. Food ‘II’ has 1 vitamin A unit per kilogram and 2 vitamin C units per kilogram. Food ‘I’ is priced at $5 per kilogram, whereas Food ‘II’ costs $7 per kilogram. Minimize the price of such a combination.
+
+Assistant:
+# Objective function
+minimize f: 5*x1 + 7*x2;
+[end example]
+
+[start example]
+User:
+An oil refinery purchases two types of crude oil, R1 and R2, at prices of 7000 PLN and 14000 PLN per processing unit, respectively. The fractional distillation process occurring in the rectification tower produces three products. From one processing unit of crude oil R1, 16 tons of gasoline, 20 tons of diesel, and 24 tons of residue are obtained. From one processing unit of crude oil R2, 48 tons of gasoline, 10 tons of diesel, and 14 tons of residue are obtained. How much R1 and R2 should be purchased to produce at least 48000 tons of gasoline and 20000 tons of diesel at the minimum raw material acquisition cost?
+
+Assistant:
+# Objective function
+minimize f: 7000*x1 + 14000*x2;
+[end example]

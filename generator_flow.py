@@ -25,8 +25,7 @@ def query_openai_model(prompt,task, model="gpt-4o-mini"):
     )
     return response['choices'][0]['message']['content']
 
-def generator(user_input):
-
+def collect_param(user_input):
     task = f'''
     Write decision variables in ZIMPL code for this task: {user_input}
     '''
@@ -35,13 +34,68 @@ def generator(user_input):
     ########### PROMPT FLOW ###########
     ###################################
 
-    ### CHECK IF GIVEN INPUT IS PROMPT #TODO
+    ### CREATE SETS
+    prompt_file_sets = "create_sets.txt"
+    prompt_sets = load_prompt(prompt_file_sets)
+    
+    try:
+        response_sets = query_openai_model(prompt_sets, task)
+    except Exception as e:
+        print(f"Error: {e}")
 
+    ### CREATE PARAMETERS
 
+    prompt_file_param = "add_parameters.txt"
+    prompt_param = load_prompt(prompt_file_param)
+    
+    try:
+        task_param = task + f"\nUse created sets: {response_sets}.\nWrite only parameters as an answer."
+        response_param = query_openai_model(prompt_param, task_param)
+    except Exception as e:
+        print(f"Error: {e}")
 
-    ### COLLECTIONS AND PARAMETERS #TODO
+    ### DECISION VARIABLES
+    prompt_file_variables = "decision_variables_param.txt"
+    prompt_var = load_prompt(prompt_file_variables)
+    
+    try:
+        task_var = task + f"\nUse created sets: {response_sets} and given parameters {response_param}.\nWrite only decision variables as an answer."
+        response_var = query_openai_model(prompt_var, task_var)
+    except Exception as e:
+        print(f"Error: {e}")
+        
+        
+    ### DEFINE OBJECTIVE
+    prompt_file_objective = "define_objective_param.txt"
+    prompt_obj = load_prompt(prompt_file_objective)
+    
+    try:
+        task_obj = task + f"\nUse created sets: {response_sets} and given parameters {response_param}. Use created decision variables: {response_var}.\nWrite only objective as an answer."
+        response_obj = query_openai_model(prompt_obj, task_obj)
+    except Exception as e:
+        print(f"Error: {e}")
+        
+    ### ADD CONSTRAINS
+    prompt_file_constrains = "constraints_param.txt"
+    prompt_con = load_prompt(prompt_file_constrains)
+    
+    try:
+        task_con = task + f"\nUse created sets: {response_sets} and given parameters {response_param}. Use created decision variables: {response_var} and define objective {response_obj}.\nWrite only constrains as an answer."
+        response_con = query_openai_model(prompt_con, task_con)
+    except Exception as e:
+        print(f"Error: {e}")
+        
+    total_response = f"{response_sets}\n\n{response_param}\n\n{response_var}\n\n{response_obj}\n\n{response_con}"
+    
+    return total_response
 
-
+def no_collect_param(user_input):
+    task = f'''
+    Write decision variables in ZIMPL code for this task: {user_input}
+    '''
+    ###################################
+    ########### PROMPT FLOW ###########
+    ###################################
 
     ### DECISION VARIABLES
     prompt_file_variables = "decision_variables.txt"
@@ -58,18 +112,18 @@ def generator(user_input):
     prompt_obj = load_prompt(prompt_file_objective)
     
     try:
-        task = task + f"\nUse created decision variables: {response_var}.\nWrite only objective as an answer."
-        response_obj = query_openai_model(prompt_obj, task)
+        task_obj = task + f"\nUse created decision variables: {response_var}.\nWrite only objective as an answer."
+        response_obj = query_openai_model(prompt_obj, task_obj)
     except Exception as e:
         print(f"Error: {e}")
         
     ### ADD CONSTRAINS
-    prompt_file_constrains = "constrains.txt"
+    prompt_file_constrains = "constraints.txt"
     prompt_con = load_prompt(prompt_file_constrains)
     
     try:
-        task = task + f"\nUse created decision variables: {response_var} and define objective {response_obj}.\nWrite only constrains as an answer."
-        response_con = query_openai_model(prompt_con, task)
+        task_con = task + f"\nUse created decision variables: {response_var} and define objective {response_obj}.\nWrite only constrains as an answer."
+        response_con = query_openai_model(prompt_con, task_con)
     except Exception as e:
         print(f"Error: {e}")
         
@@ -77,6 +131,27 @@ def generator(user_input):
     
     return total_response
 
+def generator(user_input, option = 0):
+    if option: result = collect_param(user_input)
+    else: result = no_collect_param(user_input)
+    return result
+
+def normal_generator(user_input):
+    task = f'''
+    Write ZIMPL code for this task: {user_input}. Do not add anything excluding code. You must not start with \\'\\'\\'zimpl and end with \\'\\'\\'.
+    '''
+    try:
+        response = query_openai_model(prompt="You are helpful assistant.",task=task)
+    except Exception as e:
+        print(f"Error: {e}")
+        response = ""
+    return response
+    
+
 if __name__ == "__main__":
-    response = generator("A factory manufactures two types of gadgets, regular and premium. Each gadget requires the use of two operations, assembly and finishing, and there are at most 12 hours available for each operation. A regular gadget requires 1 hour of assembly and 2 hours of finishing, while a premium gadget needs 2 hours of assembly and 1 hour of finishing. Due to other restrictions, the company can make at most 7 gadgets a day. If a profit of $20 is realized for each regular gadget and $30 for a premium gadget, how many of each should be manufactured to maximize profit?")
+    response = generator('''
+A nutritionist wants to create a diet plan for a patient. The diet must satisfy daily nutritional requirements at the lowest possible cost. The patient needs at least 50 grams of protein, 30 grams of fat, and 80 grams of carbohydrates per day. The nutritionist has identified three foods with the following nutritional content per unit and costs:
+Food 1: 10g protein, 5g fat, 15g carbs, cost $2
+Food 2: 4g protein, 10g fat, 20g carbs, cost $3
+Food 3: 5g protein, 2g fat, 8g carbs, cost $1''',1)
     print(response)
