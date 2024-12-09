@@ -15,6 +15,12 @@ def load_prompt(file_path):
             return f.read()
     except FileNotFoundError:
         raise FileNotFoundError(f"File {file_path} not found.")
+    
+def read_documentation(file):
+    with open(file, "r",encoding="utf-8") as file:
+        documentation_content = file.read()
+    documentation_content = f"Here is a fragment of the documentation from ZIMPL: {documentation_content}"
+    return documentation_content
 
 def query_openai_model(prompt,task, model="gpt-4o-mini"):
     response = openai.ChatCompletion.create(
@@ -36,7 +42,7 @@ def collect_param(user_input):
 
     ### CREATE SETS
     prompt_file_sets = "create_sets.txt"
-    prompt_sets = load_prompt(prompt_file_sets)
+    prompt_sets = load_prompt(prompt_file_sets)#+read_documentation("ZIMPL_documentation\\set_documentation.md")
     
     try:
         response_sets = query_openai_model(prompt_sets, task)
@@ -46,7 +52,7 @@ def collect_param(user_input):
     ### CREATE PARAMETERS
 
     prompt_file_param = "add_parameters.txt"
-    prompt_param = load_prompt(prompt_file_param)
+    prompt_param = load_prompt(prompt_file_param)#+read_documentation("ZIMPL_documentation\\params_documentation.md")
     
     try:
         task_param = task + f"\nUse created sets: {response_sets}.\nWrite only parameters as an answer."
@@ -56,7 +62,7 @@ def collect_param(user_input):
 
     ### DECISION VARIABLES
     prompt_file_variables = "decision_variables_param.txt"
-    prompt_var = load_prompt(prompt_file_variables)
+    prompt_var = load_prompt(prompt_file_variables)#+read_documentation("ZIMPL_documentation\\variables_documentation.md")
     
     try:
         task_var = task + f"\nUse created sets: {response_sets} and given parameters {response_param}.\nWrite only decision variables as an answer."
@@ -67,7 +73,7 @@ def collect_param(user_input):
         
     ### DEFINE OBJECTIVE
     prompt_file_objective = "define_objective_param.txt"
-    prompt_obj = load_prompt(prompt_file_objective)
+    prompt_obj = load_prompt(prompt_file_objective)#+read_documentation("ZIMPL_documentation\\objective_documentation.md")
     
     try:
         task_obj = task + f"\nUse created sets: {response_sets} and given parameters {response_param}. Use created decision variables: {response_var}.\nWrite only objective as an answer."
@@ -77,7 +83,7 @@ def collect_param(user_input):
         
     ### ADD CONSTRAINS
     prompt_file_constrains = "constraints_param.txt"
-    prompt_con = load_prompt(prompt_file_constrains)
+    prompt_con = load_prompt(prompt_file_constrains)#+read_documentation("ZIMPL_documentation\\constrains_documentation.md")
     
     try:
         task_con = task + f"\nUse created sets: {response_sets} and given parameters {response_param}. Use created decision variables: {response_var} and define objective {response_obj}.\nWrite only constrains as an answer."
@@ -99,7 +105,7 @@ def no_collect_param(user_input):
 
     ### DECISION VARIABLES
     prompt_file_variables = "decision_variables.txt"
-    prompt_var = load_prompt(prompt_file_variables)
+    prompt_var = load_prompt(prompt_file_variables)#+read_documentation("ZIMPL_documentation\\variables_documentation.md")
     
     try:
         response_var = query_openai_model(prompt_var, task)
@@ -109,7 +115,7 @@ def no_collect_param(user_input):
         
     ### DEFINE OBJECTIVE
     prompt_file_objective = "define_objective.txt"
-    prompt_obj = load_prompt(prompt_file_objective)
+    prompt_obj = load_prompt(prompt_file_objective)#+read_documentation("ZIMPL_documentation\\objective_documentation.md")
     
     try:
         task_obj = task + f"\nUse created decision variables: {response_var}.\nWrite only objective as an answer."
@@ -119,7 +125,7 @@ def no_collect_param(user_input):
         
     ### ADD CONSTRAINS
     prompt_file_constrains = "constraints.txt"
-    prompt_con = load_prompt(prompt_file_constrains)
+    prompt_con = load_prompt(prompt_file_constrains)#+read_documentation("ZIMPL_documentation\\constrains_documentation.md")
     
     try:
         task_con = task + f"\nUse created decision variables: {response_var} and define objective {response_obj}.\nWrite only constrains as an answer."

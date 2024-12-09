@@ -2,7 +2,9 @@ import os
 import subprocess
 
 def run_scip_and_extract_solution(zpl_content, scip_path):
-    os.environ["PATH"] += os.pathsep + scip_path
+    if SCIP_PATH not in os.environ["PATH"]:
+        os.environ["PATH"] += os.pathsep + SCIP_PATH
+
     
     try:
         # Write ZPL content to a temporary file
@@ -44,19 +46,51 @@ def run_scip_and_extract_solution(zpl_content, scip_path):
 
 
 # How to use
-zpl_content = """
-var x integer;    # number of adult members
-var y integer;    # number of junior members
+zpl_content = '''
+# Sets
+set CoalTypes := {"Lignite", "Anthracite"};
+set Activities := {"Cutting", "Washing"};
 
-# function
-maximize income: 20*x + 8*y;
+# Decision Variables
+var LigniteProd >= 0;  # tons of Lignite produced
+var AnthraciteProd >= 0;  # tons of Anthracite produced
+var TotalProd >= 0;  # total tons of coal produced
 
-# constrains
-subto c1: 20*x + 8*y >= 800; # Minimum Income Requirement
-subto c2: x + y <= 50; # Total Membership Restriction
-subto c3: x/4 <= y; # Junior Membership Ratio
-subto c4: x/3 >= y; # Junior Membership Ratio
-"""
+# Parameters for profit per ton
+param profit[CoalTypes] := 
+    <"Lignite"> 4, 
+    <"Anthracite"> 3;
+
+# Parameters for time requirements per ton (matrix representation)
+param time[CoalTypes * Activities] :=
+            | "Cutting", "Washing" |
+|"Lignite"   |      3,        4 |
+|"Anthracite"|      4,        2 |;
+
+# Parameters for available time per activity
+param available_time[Activities] := 
+    <"Cutting"> 12, 
+    <"Washing"> 8;
+
+# Parameters for desired total production
+param desired_total_prod := 3;
+
+# Decision Variables
+var LigniteProd integer >= 0;  # tons of Lignite produced
+var AnthraciteProd integer >= 0;  # tons of Anthracite produced
+var TotalProd integer >= 0;  # total tons of coal produced
+
+# Objective function
+maximize total_profit: profit["Lignite"] * LigniteProd + profit["Anthracite"] * AnthraciteProd;
+
+# Constraints
+subto time_constraints: 
+    forall <a> in Activities do
+        sum <c> in CoalTypes: time[c,a] * x[c] <= available_time[a];
+
+subto production_constraint: 
+    LigniteProd + AnthraciteProd = desired_total_prod;
+'''
 SCIP_PATH = r"C:\Program Files\SCIPOptSuite 9.1.0\bin"
 is_valid, solution = run_scip_and_extract_solution(zpl_content, SCIP_PATH)
 
