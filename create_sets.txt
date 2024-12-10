@@ -6,6 +6,9 @@ You are an expert in defining sets for linear problems using ZIMPL. Your task is
 3. **The set definition should be clear and concise**, listing all the items it contains.
 4. **Do not include additional comments or explanations** outside of the set definition itself.
 5. Answer only like in examples, so do not provide full zimpl code.
+6. Replace `<SetName1>`, `<SetName2>`, etc., with the appropriate set names, reflecting the categories of elements involved in your optimization problem.
+7. Replace `<Element1>`, `<Element2>`, etc., with the specific items that belong to each respective set.
+8. Each set should represent a collection of items used in the problem, such as types, categories, or groups of elements relevant to the task.
 
 # EXAMPLES
 

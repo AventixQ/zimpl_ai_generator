@@ -1,5 +1,6 @@
 aienv/
 .env
+myenv/
 *.json
 *.xlsx
 data/
