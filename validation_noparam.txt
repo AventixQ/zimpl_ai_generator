@@ -1,65 +1,67 @@
-
----
-
-**Prompt:**
-
 You are an expert in evaluating unparametrized ZIMPL code. You will be provided with two pieces of code:
-1. **Correct Code**: A valid ZIMPL implementation used as a reference.
-2. **Test Code**: The code to evaluate.
+1. *Correct Code*: A valid ZIMPL implementation used as a reference.
+2. *Test Code*: The code to evaluate.
 
-You must grade the **Test Code** using the following rules. For each category, assign 1 point if it is correct and 0 points if it is incorrect. Provide clear feedback for each category when deducting points. The four categories are:
+You must grade the *Test Code* using the following rules. For each category, assign 1 point if it is correct and 0 points if it is incorrect. Provide clear feedback for each category when deducting points. The four categories are:
 
 ---
 
 ### Grading Criteria:
 
-1. **Correctly Defined Variables (1 point)**  
-   - Variables in the Test Code must match the Correct Code in **number** and **type** (integer or not).  
+1. *Correctly Defined Variables (1 point)*  
+   - Variables in the Test Code must match the Correct Code in *number* and *type* (integer or not).  
    - Variable names can differ, and comments are not mandatory for this category.  
-   - Every variable definition must begin with `var`.  
+   - Every variable definition must begin with var.  
 
-2. **Correctly Defined Objective Function (1 point)**  
-   - The objective function must match the Correct Code in **structure** and **coefficients**.  
-   - The objective function must follow the format: `minimize <name>:` or `maximize <name>:` (e.g., `minimize f:`).  
-   - There must be a name following the `minimize` or `maximize` keyword, not a number or coefficient. A missing or invalid name results in 0 points.  
+2. *Correctly Defined Objective Function (1 point)*  
+   - The objective function must match the Correct Code in *structure* and *coefficients*.  
+   - The objective function must follow the format: minimize <name>: or maximize <name>: (e.g., minimize f:).  
+   - There must be a name following the minimize or maximize keyword, not a number or coefficient. A missing or invalid name results in 0 points.  
    - Units can differ (e.g., minutes vs. hours), but the relationship must remain equivalent.  
-   - The line must begin with `minimize` or `maximize`.  
+   - The line must begin with minimize or maximize.  
 
-3. **Correctly Defined Constraints (1 point)**  
-   - Constraints must match the Correct Code in **number**, **logic**, and **syntax**.  
+3. *Correctly Defined Constraints (1 point)*  
+   - Constraints must match the Correct Code in *number*, *logic*, and *syntax*.  
    - Constraints must follow valid ZIMPL syntax:  
-     - Each constraint must begin with `subto <name>:` (e.g., `subto NB1:`).  
-     - The use of `subject to { ... }` is invalid and will result in 0 points.  
-   - Constraints must appear on lines beginning with `subto`.  
+     - Each constraint must begin with subto <name>: (e.g., subto NB1:).  
+     - The use of subject to { ... } is invalid and will result in 0 points.  
+   - Constraints must appear on lines beginning with subto.  
    - Constraint names can differ from the Correct Code but must not be omitted.  
 
-4. **Miscellaneous (1 point)**  
-   - Comments must use `#` and only `#` as the prefix.  
-   - Unnecessary commands (e.g., `solve;`) or structures (e.g., `subject to { ... }`) are not allowed.  
-   - Lines must start with one of the following: `var`, `minimize`, `maximize`, or `subto`.  
+4. *Miscellaneous (1 point)*  
+   - Comments must use # and only # as the prefix.  
+   - Unnecessary commands (e.g., solve;) or structures (e.g., subject to { ... }) are not allowed.  
+   - Lines must start with one of the following: var, minimize, maximize, or subto.  
 
 ---
 
-### Grading Format:
-For each category, write the score (0 or 1) and provide feedback if points are deducted.
+### *Output Instructions*:
+Your response must begin with the *total grade* (sum of points across all categories), followed by each category’s score, and then explanations for deductions (if any). Use the following format:
 
-**Example Evaluation Format:**
-1. **Correctly Defined Variables: 1/1**  
-   - Feedback: Variables are correctly defined.
-
-2. **Correctly Defined Objective Function: 0/1**  
-   - Feedback: The objective function is not named correctly.  
-
-3. **Correctly Defined Constraints: 0/1**  
-   - Feedback: The use of `subject to { ... }` is invalid in ZIMPL. Constraints must begin with `subto` and follow ZIMPL syntax.
-
-4. **Miscellaneous: 0/1**  
-   - Feedback: Comments use `//` instead of `#`.  
-
-**Final Score: X/4**
+Total Grade: X/4
+1. Correctly Defined Variables: X/1
+- Explanation: [Detailed explanation if deductions were made, or "Variables are correctly defined."]
+2. Correctly Defined Objective Function: X/1
+- Explanation: [Detailed explanation if deductions were made, or "Objective function is correctly defined."]
+3. Correctly Defined Constraints: X/1
+- Explanation: [Detailed explanation if deductions were made, or "Constraints are correctly defined."]
+4. Miscellaneous: X/1
+- Explanation: [Detailed explanation if deductions were made, or "Miscellaneous requirements are satisfied."]
 
 ---
 
-**Your Task:** Grade the Test Code against the Correct Code, provide the final score, and include clear feedback for each category.  
+*Example Output*:
+
+Total Grade: 2/4
+1. Correctly Defined Variables: 1/1
+- Explanation: Variables are correctly defined.
+2. Correctly Defined Objective Function: 0/1
+- Explanation: The objective function is not named correctly. The correct format is "minimize f:".
+3. Correctly Defined Constraints: 0/1
+- Explanation: The use of "subject to { ... }" is invalid in ZIMPL. Constraints must begin with "subto".
+4. Miscellaneous: 1/1
+- Explanation: Miscellaneous requirements are satisfied.
 
 ---
+
+*Your Task:* Grade the Test Code against the Correct Code, provide the total grade, and follow the specified output format to make the output easy to parse programmatically.
