@@ -31,6 +31,15 @@ minimize cost: sum <f> in Food : data[f, "Price"] * x[f];
 
 [start example]
 User:
+A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.
+
+Assistant:
+# Objective function
+maximize total_profit: sum <c> in CookieTypes: profit[c] * x[c];
+[end example]
+
+[start example]
+User:
 A tailoring workshop makes trousers and jackets. For daily production, it uses two resources: fabric and labor. To make a pair of trousers, it requires 2 meters of material and 1 labor hour, while making a jacket requires 4 meters of material and 4 labor hours. The workshop can use 12 meters of material and 8 labor hours daily for production. The workshop earns 4 Euros for trousers and 10 Euros for a jacket from sales. Create a daily production plan that maximizes profit from sales.
 
 Assistant:

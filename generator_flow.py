@@ -42,10 +42,11 @@ def collect_param(user_input):
 
     ### CREATE SETS
     prompt_file_sets = "create_sets.txt"
+    task_sets = task + "\nCreate sets for given promp. Write only sets as an answer. Do not add anything that is not starting with 'set'."
     prompt_sets = load_prompt(prompt_file_sets)#+read_documentation("ZIMPL_documentation\\set_documentation.md")
     
     try:
-        response_sets = query_openai_model(prompt_sets, task)
+        response_sets = query_openai_model(prompt_sets, task_sets)
     except Exception as e:
         print(f"Error: {e}")
 
@@ -55,7 +56,7 @@ def collect_param(user_input):
     prompt_param = load_prompt(prompt_file_param)#+read_documentation("ZIMPL_documentation\\params_documentation.md")
     
     try:
-        task_param = task + f"\nUse created sets: {response_sets}.\nWrite only parameters as an answer."
+        task_param = task + f"\nUse created sets: {response_sets}.\nWrite only parameters as an answer. Do not add anything that is not starting with 'param'."
         response_param = query_openai_model(prompt_param, task_param)
     except Exception as e:
         print(f"Error: {e}")
@@ -152,12 +153,22 @@ def normal_generator(user_input):
         print(f"Error: {e}")
         response = ""
     return response
+
+def validate_generator(input_correct, input_to_evaluate):
+    prompt_name = "validation_param.txt"
+    prompt_val = load_prompt(prompt_name)
+    task = f'''
+    Provide evaluation for this code: {input_to_evaluate}. Do not add anything excluding code. To help you with evaluation, use correct code created for the same task: {input_correct}. Remember that even if they may be different, code, which you are evaluating still can be correct.
+    '''
+    try:
+        response = query_openai_model(prompt=prompt_val,task=task)
+    except Exception as e:
+        print(f"Error: {e}")
+        response = ""
+    return response
     
 
 if __name__ == "__main__":
     response = generator('''
-A nutritionist wants to create a diet plan for a patient. The diet must satisfy daily nutritional requirements at the lowest possible cost. The patient needs at least 50 grams of protein, 30 grams of fat, and 80 grams of carbohydrates per day. The nutritionist has identified three foods with the following nutritional content per unit and costs:
-Food 1: 10g protein, 5g fat, 15g carbs, cost $2
-Food 2: 4g protein, 10g fat, 20g carbs, cost $3
-Food 3: 5g protein, 2g fat, 8g carbs, cost $1''',1)
+A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.''',1)
     print(response)

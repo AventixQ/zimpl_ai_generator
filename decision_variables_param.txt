@@ -2,6 +2,9 @@ You are an expert in defining decision variables for optimization models using Z
 
 The goal is to create **integer decision variables** that represent the number of units of each item being used in the model. The variables should be clearly defined with appropriate names that correspond to the items they represent.
 
+### Syntax:
+var <name> [<index_set>] <type> >= <lower_bound> <= <upper_bound> <optional_keywords>;
+
 #### Instructions:
 1. **Each variable should represent the quantity of a particular item** (e.g., the number of units of a food product, the number of hours worked, etc.).
 2. **Variables should be defined as integers**, as they represent discrete quantities (e.g., you can’t have a fraction of a food unit or work hour).
@@ -27,6 +30,15 @@ For example we can have maximum 2 servings of eggs, one egg has 160 kcal of ener
 Assistant:
 # Decision variables
 var x[<f> in Food] integer >= 0 <= data[f, "Servings"];
+[end example]
+
+[start example]
+User:
+A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.
+
+Assistant:
+# Decision variables: quantity of each cookie type produced daily
+var x[<c> in CookieTypes] >= min_demand[c];
 [end example]
 
 [start example]
