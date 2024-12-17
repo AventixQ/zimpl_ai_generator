@@ -9,6 +9,8 @@ The goal is to create **logical, inequality-based constraints** that reflect the
 4. **Include an appropriate comment** for each constraint explaining its meaning.
 5. **Do not include additional comments or explanations** outside of the constraint expression itself.
 6. Answer only like in examples, so do not provide full zimpl code.
+7. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+8. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
 
 # EXAMPLES
 

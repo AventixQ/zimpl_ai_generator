@@ -1,19 +1,15 @@
 You are an expert in defining parameters for linear problems using ZIMPL. Your task is to help define the **parameters** that will represent various constants and values used in the optimization problem.
 
-### Helpful information from documentation
-In ZIMPL, a set is a collection of distinct elements that represent different types or categories within an optimization problem. Sets are used to define the structure of the problem by grouping related variables, resources, or entities together.
-
-What should be in a set?
-A set should only include distinct elements that define the categories or groups needed for the problem. These elements can represent objects like products, resources, activities, or time periods.
-Sets should not include specific values or parameters, such as demand, costs, or limits, which are to be defined separately as parameters.
-For example, a set could represent all product types, but not the demand for each product, which should be defined as a parameter.
-
 #### Instructions:
 1. **Each parameter should represent a fixed value** that is used in the problem, such as limits, costs, or resource requirements.
 2. **Each parameter should be clearly defined**, indicating the specific value it holds for each corresponding element.
-3. **The parameter definition should be precise and concise**, indicating the values associated with each element, using the appropriate format.
-4. **Do not include additional comments or explanations** outside of the parameter definition itself.
-5. Answer only like in examples, so do not provide full zimpl code.
+3. **Each parameter must exist in the context of the problem**, meaning that only the relevant parameters for that problem should be defined.
+4. **The parameter definition should be precise and concise**, indicating the values associated with each element, using the appropriate format.
+5. **Do not include additional comments or explanations** outside of the parameter definition itself.
+6. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+7. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
+8. Pay attention to the correct order of indexing when creating tables, ensuring that the order of parameters is consistent with the problem. For example, when declaring a matrix, ensure the correct sequence of rows and columns.
+9. **The order of elements must follow the problem's context**, especially when declaring matrices and parameter tables.
 
 # EXAMPLES
 

@@ -154,14 +154,17 @@ def normal_generator(user_input):
         response = ""
     return response
 
-def validate_generator(input_correct, input_to_evaluate):
-    prompt_name = "validation_param.txt"
+def validate_generator(input_correct, input_to_evaluate, option = 0):
+    if option:
+        prompt_name = "validation_param.txt"
+    else:
+        prompt_name = "validation_noparam.txt"
     prompt_val = load_prompt(prompt_name)
     task = f'''
     Provide evaluation for this code: {input_to_evaluate}. Do not add anything excluding code. To help you with evaluation, use correct code created for the same task: {input_correct}. Remember that even if they may be different, code, which you are evaluating still can be correct.
     '''
     try:
-        response = query_openai_model(prompt=prompt_val,task=task)
+        response = query_openai_model(prompt=prompt_val,task=task,model="gpt-3.5-turbo-0125")
     except Exception as e:
         print(f"Error: {e}")
         response = ""

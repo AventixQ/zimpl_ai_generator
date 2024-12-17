@@ -51,4 +51,4 @@ x$Lignite                                           1   (obj:4)
 """
 
 result, message = compare_solutions(test_solution, correct_solution)
-print(message)
+#print(result)

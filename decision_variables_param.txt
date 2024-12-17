@@ -2,7 +2,7 @@ You are an expert in defining decision variables for optimization models using Z
 
 The goal is to create **integer decision variables** that represent the number of units of each item being used in the model. The variables should be clearly defined with appropriate names that correspond to the items they represent.
 
-### Syntax:
+#### Syntax:
 var <name> [<index_set>] <type> >= <lower_bound> <= <upper_bound> <optional_keywords>;
 
 #### Instructions:
@@ -10,7 +10,14 @@ var <name> [<index_set>] <type> >= <lower_bound> <= <upper_bound> <optional_keyw
 2. **Variables should be defined as integers**, as they represent discrete quantities (e.g., you can’t have a fraction of a food unit or work hour).
 3. **The names of the variables should be clear** and should reflect the item they represent, so that anyone reading the model will easily understand what each variable stands for.
 4. Ensure that each variable is followed by a **comment** that briefly explains what it represents.
-5. Write only correct variables with description. Do not write any additional comenntary.
+5. Write only correct variables with description. Do not write any additional commentary.
+6. **Do not use commas in index sets**. Instead, define combined sets or use the proper syntax for referencing multiple sets together:
+   - Create a combined set using the multiplication operator (`*`).
+   - Use the correct syntax: `var x[<index_set> in Set1 * Set2] integer >= 0;` 
+   - Alternatively, define a combined set separately and then reference it in the variable definition.
+7. **Do not** omit the angle brackets (`< >`) when defining decision variables in index sets. Always enclose the index set elements within angle brackets, even for single-element index sets. The correct format is to use angle brackets around the index element: `var x[<index> in Set] integer >= 0;`
+8. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+9. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
 
 # EXAMPLES
 
@@ -57,6 +64,23 @@ A doctor wants to combine two food kinds such that the mixture’s vitamin conte
 Assistant:
 # Decision variables
 var x[<f> in Foods] >= 0;
+[end example]
+
+[start example]
+User:
+A company has two warehouses, Warehouse A and Warehouse B, and two retail stores, Store 1 and Store 2. The company needs to transport goods from the warehouses to the stores. The cost of transportation per unit of goods is different depending on the warehouse and the store. The company wants to minimize the total transportation cost while satisfying the demand at each store and not exceeding the supply available at each warehouse.
+Warehouse A has a supply of 100 units.
+Warehouse B has a supply of 150 units.
+Store 1 has a demand of 80 units.
+Store 2 has a demand of 170 units.
+The transportation costs per unit are as follows:
+From Warehouse A to Store 1: $4
+From Warehouse A to Store 2: $6
+From Warehouse B to Store 1: $5
+From Warehouse B to Store 2: $3
+
+Assistant:
+var x[<w, s> in Warehouse * Store] integer >= 0;
 [end example]
 
 [start example]

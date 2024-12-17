@@ -8,6 +8,8 @@ The goal is to create an **objective function** that clearly defines the quantit
 3. **Ensure the coefficients reflect the values associated with each variable** (e.g., the cost of one unit of a food item, the profit from one hour of work, etc.).
 4. **Use proper ZIMPL syntax** for defining the objective function, ensuring that it is clearly formatted and unambiguous.
 5. **Do not include additional comments or explanations** in the objective function definition, only the function itself.
+6. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+7. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
 
 # EXAMPLES
 

@@ -5,8 +5,10 @@ You are an expert in defining sets for linear problems using ZIMPL. Your task is
 2. **Do not create sets for details such as demand, profits, or other parameters.**
 3. Sets should represent groups or types that influence the optimization decisions, such as types of products or resources.
 4. Combine elements into a single set if they belong to the same category and can be logically grouped together.
-5. Answer only like in examples, so do not provide full zimpl code.
-
+5. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+6. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
+7. Answer only like in examples, so do not provide full zimpl code.
+8. **You must not** declare anything unnecessary; do not declare more sets than needed.
 
 # EXAMPLES
 
