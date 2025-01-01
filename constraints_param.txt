@@ -13,6 +13,7 @@ The goal is to create **logical, inequality-based constraints** that reflect the
 8. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
 9. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
 10. In case of equalities there **must be** two equal signs '=='.
+11. You can write a maximum of one constraint for one subto. 
 
 # EXAMPLES
 

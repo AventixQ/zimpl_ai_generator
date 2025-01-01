@@ -138,10 +138,18 @@ def no_collect_param(user_input):
     
     return total_response
 
+def post_processing(to_process):
+    phrases_to_remove = ["[end example]", "[start example]", "```zimpl","```"]
+
+    processed_text = "\n".join(
+        line for line in to_process.splitlines() if not any(phrase in line for phrase in phrases_to_remove)
+    )
+    return processed_text
+
 def generator(user_input, option = 0):
     if option: result = collect_param(user_input)
     else: result = no_collect_param(user_input)
-    return result
+    return post_processing(result)
 
 def normal_generator(user_input):
     task = f'''
@@ -152,7 +160,7 @@ def normal_generator(user_input):
     except Exception as e:
         print(f"Error: {e}")
         response = ""
-    return response
+    return post_processing(response)
 
 def validate_generator(input_correct, input_to_evaluate, option = 0):
     if option:
@@ -171,7 +179,13 @@ def validate_generator(input_correct, input_to_evaluate, option = 0):
     return response
     
 
+
 if __name__ == "__main__":
     response = generator('''
 A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.''',1)
-    print(response)
+    #print(response)
+
+    to_process = '''
+    # Sets\nset CookieTypes := {\"Caramel\", \"ChocolateChip\"};\nset Demand := {\"MinCaramel\", \"MinChocolateChip\", \"MinTotalCookies\"};\nset ProductionLimits := {\"MaxCaramel\", \"MaxChocolateChip\"};\n\nparam min_demand[Demand] :=\n    <\"MinCaramel\"> 80,\n    <\"MinChocolateChip\"> 120,\n    <\"MinTotalCookies\"> 240;\n\nparam max_production[ProductionLimits] :=\n    <\"MaxCaramel\"> 120,\n    <\"MaxChocolateChip\"> 140;\n\nparam profit[CookieTypes] :=\n    <\"Caramel\"> 0.88,\n    <\"ChocolateChip\"> 0.75;\n\n# Decision variables\nvar x[<c> in CookieTypes] integer >= 0;  # Quantity of each type of cookie produced daily\n\n# Objective function\nmaximize total_profit: sum <c> in CookieTypes: profit[c] * x[c];\n\n# Constraints\n# Ensure minimum demand for each type of cookie\nsubto min_demand_constraints:\n    forall <d> in Demand do\n        if d == \"MinCaramel\" then\n            x[\"Caramel\"] >= min_demand[d];\n        else if d == \"MinChocolateChip\" then\n            x[\"ChocolateChip\"] >= min_demand[d];\n        else if d == \"MinTotalCookies\" then\n            sum <c> in CookieTypes: x[c] >= min_demand[d];\n\n# Do not exceed daily production limits\nsubto production_limits:\n    forall <p> in ProductionLimits do\n        if p == \"MaxCaramel\" then\n            x[\"Caramel\"] <= max_production[p];\n        else if p == \"MaxChocolateChip\" then\n            x[\"ChocolateChip\"] <= max_production[p];
+    '''
+    print(post_processing(to_process))
