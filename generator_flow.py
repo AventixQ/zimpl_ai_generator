@@ -172,7 +172,7 @@ def validate_generator(input_correct, input_to_evaluate, option = 0):
     Provide evaluation for this code: {input_to_evaluate}. Do not add anything excluding code. To help you with evaluation, use correct code created for the same task: {input_correct}. Remember that even if they may be different, code, which you are evaluating still can be correct.
     '''
     try:
-        response = query_openai_model(prompt=prompt_val,task=task,model="gpt-3.5-turbo-0125")
+        response = query_openai_model(prompt=prompt_val,task=task,model="gpt-4o")
     except Exception as e:
         print(f"Error: {e}")
         response = ""
