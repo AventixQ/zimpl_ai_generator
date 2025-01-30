@@ -8,6 +8,8 @@ The goal is to create an **objective function** that clearly defines the quantit
 3. **Ensure the coefficients reflect the values associated with each variable** (e.g., the cost of one unit of a food item, the profit from one hour of work, etc.).
 4. **Use proper ZIMPL syntax** for defining the objective function, ensuring that it is clearly formatted and unambiguous.
 5. **Do not include additional comments or explanations** in the objective function definition, only the function itself.
+6. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+7. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
 
 # EXAMPLES
 
@@ -27,6 +29,15 @@ For example we can have maximum 2 servings of eggs, one egg has 160 kcal of ener
 Assistant:
 # Objective function
 minimize cost: sum <f> in Food : data[f, "Price"] * x[f];
+[end example]
+
+[start example]
+User:
+A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.
+
+Assistant:
+# Objective function
+maximize total_profit: sum <c> in CookieTypes: profit[c] * x[c];
 [end example]
 
 [start example]

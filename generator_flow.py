@@ -15,6 +15,12 @@ def load_prompt(file_path):
             return f.read()
     except FileNotFoundError:
         raise FileNotFoundError(f"File {file_path} not found.")
+    
+def read_documentation(file):
+    with open(file, "r",encoding="utf-8") as file:
+        documentation_content = file.read()
+    documentation_content = f"Here is a fragment of the documentation from ZIMPL: {documentation_content}"
+    return documentation_content
 
 def query_openai_model(prompt,task, model="gpt-4o-mini"):
     response = openai.ChatCompletion.create(
@@ -36,27 +42,28 @@ def collect_param(user_input):
 
     ### CREATE SETS
     prompt_file_sets = "create_sets.txt"
-    prompt_sets = load_prompt(prompt_file_sets)
+    task_sets = task + "\nCreate sets for given promp. Write only sets as an answer. Do not add anything that is not starting with 'set'."
+    prompt_sets = load_prompt(prompt_file_sets)#+read_documentation("ZIMPL_documentation\\set_documentation.md")
     
     try:
-        response_sets = query_openai_model(prompt_sets, task)
+        response_sets = query_openai_model(prompt_sets, task_sets)
     except Exception as e:
         print(f"Error: {e}")
 
     ### CREATE PARAMETERS
 
     prompt_file_param = "add_parameters.txt"
-    prompt_param = load_prompt(prompt_file_param)
+    prompt_param = load_prompt(prompt_file_param)#+read_documentation("ZIMPL_documentation\\params_documentation.md")
     
     try:
-        task_param = task + f"\nUse created sets: {response_sets}.\nWrite only parameters as an answer."
+        task_param = task + f"\nUse created sets: {response_sets}.\nWrite only parameters as an answer. Do not add anything that is not starting with 'param'."
         response_param = query_openai_model(prompt_param, task_param)
     except Exception as e:
         print(f"Error: {e}")
 
     ### DECISION VARIABLES
     prompt_file_variables = "decision_variables_param.txt"
-    prompt_var = load_prompt(prompt_file_variables)
+    prompt_var = load_prompt(prompt_file_variables)#+read_documentation("ZIMPL_documentation\\variables_documentation.md")
     
     try:
         task_var = task + f"\nUse created sets: {response_sets} and given parameters {response_param}.\nWrite only decision variables as an answer."
@@ -67,7 +74,7 @@ def collect_param(user_input):
         
     ### DEFINE OBJECTIVE
     prompt_file_objective = "define_objective_param.txt"
-    prompt_obj = load_prompt(prompt_file_objective)
+    prompt_obj = load_prompt(prompt_file_objective)#+read_documentation("ZIMPL_documentation\\objective_documentation.md")
     
     try:
         task_obj = task + f"\nUse created sets: {response_sets} and given parameters {response_param}. Use created decision variables: {response_var}.\nWrite only objective as an answer."
@@ -77,7 +84,7 @@ def collect_param(user_input):
         
     ### ADD CONSTRAINS
     prompt_file_constrains = "constraints_param.txt"
-    prompt_con = load_prompt(prompt_file_constrains)
+    prompt_con = load_prompt(prompt_file_constrains)#+read_documentation("ZIMPL_documentation\\constrains_documentation.md")
     
     try:
         task_con = task + f"\nUse created sets: {response_sets} and given parameters {response_param}. Use created decision variables: {response_var} and define objective {response_obj}.\nWrite only constrains as an answer."
@@ -99,7 +106,7 @@ def no_collect_param(user_input):
 
     ### DECISION VARIABLES
     prompt_file_variables = "decision_variables.txt"
-    prompt_var = load_prompt(prompt_file_variables)
+    prompt_var = load_prompt(prompt_file_variables)#+read_documentation("ZIMPL_documentation\\variables_documentation.md")
     
     try:
         response_var = query_openai_model(prompt_var, task)
@@ -109,7 +116,7 @@ def no_collect_param(user_input):
         
     ### DEFINE OBJECTIVE
     prompt_file_objective = "define_objective.txt"
-    prompt_obj = load_prompt(prompt_file_objective)
+    prompt_obj = load_prompt(prompt_file_objective)#+read_documentation("ZIMPL_documentation\\objective_documentation.md")
     
     try:
         task_obj = task + f"\nUse created decision variables: {response_var}.\nWrite only objective as an answer."
@@ -119,7 +126,7 @@ def no_collect_param(user_input):
         
     ### ADD CONSTRAINS
     prompt_file_constrains = "constraints.txt"
-    prompt_con = load_prompt(prompt_file_constrains)
+    prompt_con = load_prompt(prompt_file_constrains)#+read_documentation("ZIMPL_documentation\\constrains_documentation.md")
     
     try:
         task_con = task + f"\nUse created decision variables: {response_var} and define objective {response_obj}.\nWrite only constrains as an answer."
@@ -131,10 +138,18 @@ def no_collect_param(user_input):
     
     return total_response
 
+def post_processing(to_process):
+    phrases_to_remove = ["[end example]", "[start example]", "```zimpl","```"]
+
+    processed_text = "\n".join(
+        line for line in to_process.splitlines() if not any(phrase in line for phrase in phrases_to_remove)
+    )
+    return processed_text
+
 def generator(user_input, option = 0):
     if option: result = collect_param(user_input)
     else: result = no_collect_param(user_input)
-    return result
+    return post_processing(result)
 
 def normal_generator(user_input):
     task = f'''
@@ -145,13 +160,32 @@ def normal_generator(user_input):
     except Exception as e:
         print(f"Error: {e}")
         response = ""
+    return post_processing(response)
+
+def validate_generator(input_correct, input_to_evaluate, option = 0):
+    if option:
+        prompt_name = "validation_param.txt"
+    else:
+        prompt_name = "validation_noparam.txt"
+    prompt_val = load_prompt(prompt_name)
+    task = f'''
+    Provide evaluation for this code: {input_to_evaluate}. Do not add anything excluding code. To help you with evaluation, use correct code created for the same task: {input_correct}. Remember that even if they may be different, code, which you are evaluating still can be correct.
+    '''
+    try:
+        response = query_openai_model(prompt=prompt_val,task=task,model="gpt-4o")
+    except Exception as e:
+        print(f"Error: {e}")
+        response = ""
     return response
     
 
+
 if __name__ == "__main__":
     response = generator('''
-A nutritionist wants to create a diet plan for a patient. The diet must satisfy daily nutritional requirements at the lowest possible cost. The patient needs at least 50 grams of protein, 30 grams of fat, and 80 grams of carbohydrates per day. The nutritionist has identified three foods with the following nutritional content per unit and costs:
-Food 1: 10g protein, 5g fat, 15g carbs, cost $2
-Food 2: 4g protein, 10g fat, 20g carbs, cost $3
-Food 3: 5g protein, 2g fat, 8g carbs, cost $1''',1)
-    print(response)
+A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.''',1)
+    #print(response)
+
+    to_process = '''
+    # Sets\nset CookieTypes := {\"Caramel\", \"ChocolateChip\"};\nset Demand := {\"MinCaramel\", \"MinChocolateChip\", \"MinTotalCookies\"};\nset ProductionLimits := {\"MaxCaramel\", \"MaxChocolateChip\"};\n\nparam min_demand[Demand] :=\n    <\"MinCaramel\"> 80,\n    <\"MinChocolateChip\"> 120,\n    <\"MinTotalCookies\"> 240;\n\nparam max_production[ProductionLimits] :=\n    <\"MaxCaramel\"> 120,\n    <\"MaxChocolateChip\"> 140;\n\nparam profit[CookieTypes] :=\n    <\"Caramel\"> 0.88,\n    <\"ChocolateChip\"> 0.75;\n\n# Decision variables\nvar x[<c> in CookieTypes] integer >= 0;  # Quantity of each type of cookie produced daily\n\n# Objective function\nmaximize total_profit: sum <c> in CookieTypes: profit[c] * x[c];\n\n# Constraints\n# Ensure minimum demand for each type of cookie\nsubto min_demand_constraints:\n    forall <d> in Demand do\n        if d == \"MinCaramel\" then\n            x[\"Caramel\"] >= min_demand[d];\n        else if d == \"MinChocolateChip\" then\n            x[\"ChocolateChip\"] >= min_demand[d];\n        else if d == \"MinTotalCookies\" then\n            sum <c> in CookieTypes: x[c] >= min_demand[d];\n\n# Do not exceed daily production limits\nsubto production_limits:\n    forall <p> in ProductionLimits do\n        if p == \"MaxCaramel\" then\n            x[\"Caramel\"] <= max_production[p];\n        else if p == \"MaxChocolateChip\" then\n            x[\"ChocolateChip\"] <= max_production[p];
+    '''
+    print(post_processing(to_process))

@@ -3,9 +3,13 @@ You are an expert in defining parameters for linear problems using ZIMPL. Your t
 #### Instructions:
 1. **Each parameter should represent a fixed value** that is used in the problem, such as limits, costs, or resource requirements.
 2. **Each parameter should be clearly defined**, indicating the specific value it holds for each corresponding element.
-3. **The parameter definition should be precise and concise**, indicating the values associated with each element, using the appropriate format.
-4. **Do not include additional comments or explanations** outside of the parameter definition itself.
-5. Answer only like in examples, so do not provide full zimpl code.
+3. **Each parameter must exist in the context of the problem**, meaning that only the relevant parameters for that problem should be defined.
+4. **The parameter definition should be precise and concise**, indicating the values associated with each element, using the appropriate format.
+5. **Do not include additional comments or explanations** outside of the parameter definition itself.
+6. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+7. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
+8. Pay attention to the correct order of indexing when creating tables, ensuring that the order of parameters is consistent with the problem. For example, when declaring a matrix, ensure the correct sequence of rows and columns.
+9. **The order of elements must follow the problem's context**, especially when declaring matrices and parameter tables.
 
 # EXAMPLES
 
@@ -40,6 +44,29 @@ param data[Food * Attr] :=
 
 [start example]
 User:
+A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.
+
+Assistant:
+# Parameters for daily demand and production limits
+param min_demand[CookieTypes] :=
+    <"Caramel"> 80,
+    <"ChocolateChip"> 120;
+
+param max_production[CookieTypes] :=
+    <"Caramel"> 120,
+    <"ChocolateChip"> 140;
+
+# Parameter for minimum total sales
+param min_total_sales := 240;
+
+# Parameters for profit per cookie (in dollars)
+param profit[CookieTypes] :=
+    <"Caramel"> 0.88,
+    <"ChocolateChip"> 0.75;
+[end example]
+
+[start example]
+User:
 A tailoring workshop makes trousers and jackets. For daily production, it uses two resources: fabric and labor. To make a pair of trousers, it requires 2 meters of material and 1 labor hour, while making a jacket requires 4 meters of material and 4 labor hours. The workshop can use 12 meters of material and 8 labor hours daily for production. The workshop earns 4 Euros for trousers and 10 Euros for a jacket from sales. Create a daily production plan that maximizes profit from sales.
 
 Assistant:
@@ -49,7 +76,7 @@ param prices[Clothes] := <"Trousers"> 4, <"Jackets"> 10;
 # Parameters for daily limit
 param daily_limit[Resources] := <"Fabric"> 12, <"Labor"> 8;
 
-# Resurces needed per clothes
+# Resources needed per clothes
 param data[Clothes * Resources] :=
             |"Fabric"   , "Labor"  |
 |"Trousers" |          2,         1|
@@ -87,7 +114,6 @@ Assistant:
 param cost[CrudeOils] := 
     <"R1"> 7000, 
     <"R2"> 14000;
-
 
 # Parameters for product limits
 param product_limit[Products] := 

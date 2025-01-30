@@ -4,11 +4,16 @@ The goal is to create **logical, inequality-based constraints** that reflect the
 
 #### Instructions:
 1. **Each constraint should represent a logical relationship** between the decision variables.
-2. **Use inequality constraints** (e.g., `>=`, `<=`, `=`) to define the required limits for each condition.
+2. **Use inequality constraints** (e.g., >=, <=, =) to define the required limits for each condition.
 3. **Each constraint should clearly reflect the condition it enforces**, such as minimum or maximum amounts for resources, quantities, or other metrics.
 4. **Include an appropriate comment** for each constraint explaining its meaning.
-5. **Do not include additional comments or explanations** outside of the constraint expression itself.
-6. Answer only like in examples, so do not provide full zimpl code.
+5. Each **if** statement must end with **end** statement; ensure there is only **one semicolon** at the end of the entire constraint block. There **must be no** semicolon before an `else`. Remamber that this information is only about **if and else** statement.
+6. Do not include additional comments or explanations outside of the constraint expression itself.
+7. Answer only like in examples, so do not provide full zimpl code.
+8. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+9. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
+10. In case of equalities there **must be** two equal signs '=='.
+11. You can write a maximum of one constraint for one subto. 
 
 # EXAMPLES
 
@@ -33,12 +38,58 @@ subto need: forall <n> in Nutrients do
 
 [start example]
 User:
+A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.
+
+Assistant:
+# Constraints
+# Ensure minimum total cookies are sold
+subto total_sales:
+    sum <c> in CookieTypes: x[c] >= min_total_sales;
+
+# Do not exceed daily production limits
+subto production_limits:
+    forall <c> in CookieTypes do
+        x[c] <= max_production[c];
+[end example]
+
+[start example]
+User:
 A tailoring workshop makes trousers and jackets. For daily production, it uses two resources: fabric and labor. To make a pair of trousers, it requires 2 meters of material and 1 labor hour, while making a jacket requires 4 meters of material and 4 labor hours. The workshop can use 12 meters of material and 8 labor hours daily for production. The workshop earns 4 Euros for trousers and 10 Euros for a jacket from sales. Create a daily production plan that maximizes profit from sales.
 
 Assistant:
 # Constraints
 subto limits: forall <r> in Resources do
     sum <c> in Clothes: data[c,r] * x[c] <= daily_limit[r];
+[end example]
+
+[start example]
+User:
+A bakery produces two types of cookies: chocolate chip and caramel. The bakery anticipates daily demand for a minimum of 80 caramelized & 120 chocolate chip cookies. Due to a lack of raw materials and labor, the bakery can produce 120 caramel cookies and 140 chocolate chip cookies daily. For the bakery to be viable, it must sell a minimum of 240 cookies each day. Every chocolate chip cookie served generates $0.75 in profit, whereas each caramel biscuit generates $0.88. The solution to the number of chocolate chip and caramel cookies that the bakery must produce each day to maximize profit may be determined using linear programming.
+
+Assistant:
+# Constraints
+# Minimum demand constraints
+subto min_demand_constraints:
+  forall <d> in Demand do
+    if d == "MinCaramel" then
+      x["Caramel"] >= min_demand[d]
+    else
+      if d == "MinChocolateChip" then
+        x["ChocolateChip"] >= min_demand[d]
+      else
+        # Here d must be "MinTotalCookies"
+        sum <c> in CookieTypes: x[c] >= min_demand[d]
+      end
+    end;
+# Production limits
+subto production_limits:
+  forall <p> in ProductionLimits do
+    if (p == "MaxCaramel") then
+      x["Caramel"] <= max_production[p]
+    else
+      # Here p must be "MaxChocolateChip"
+      x["ChocolateChip"] <= max_production[p]
+    end;
 [end example]
 
 [start example]
@@ -50,42 +101,4 @@ Assistant:
 subto vitamin_constraints: 
     forall <v> in Vitamins do
         sum <f> in Foods: content[f,v] * x[f] >= vitamin_limit[v];
-[end example]
-
-[start example]
-User:
-An oil refinery purchases two types of crude oil, R1 and R2, at prices of 7000 PLN and 14000 PLN per processing unit, respectively. The fractional distillation process occurring in the rectification tower produces three products. From one processing unit of crude oil R1, 16 tons of gasoline, 20 tons of diesel, and 24 tons of residue are obtained. From one processing unit of crude oil R2, 48 tons of gasoline, 10 tons of diesel, and 14 tons of residue are obtained. How much R1 and R2 should be purchased to produce at least 48000 tons of gasoline and 20000 tons of diesel at the minimum raw material acquisition cost?
-
-Assistant:
-# Constraints
-subto production_constraints: 
-    forall <p> in Products do
-        sum <c> in CrudeOils: yield[c,p] * x[c] >= product_limit[p];
-[end example]
-
-[start example]
-User:
-One type of cake calls for 200g of flour and 25g of fat, but another one calls for 100g of flour and 50g of fat. This issue may be expressed as a linear programming problem to determine the highest proportion of cake that can be baked using 5kg of flour and 1kg of fat. (Maximize the quantities of cakes in total). It also implies that there are sufficient quantities of the other cake-making components. (1kg = 1000g)
-
-Assistant:
-# Constraints
-subto resource_constraints: 
-    forall <r> in Resources do
-        sum <c> in Cakes: requirement[c,r] * x[c] <= resource_limit[r];
-[end example]
-
-[start example]
-User:
-Two types of coal, A priced at 500 PLN per ton and B priced at 400 PLN per ton, contain impurities of phosphorus and iron compounds. In a certain industrial process, at least 90 tons of fuel are required, containing no more than 0.03% phosphorus and no more than 4% iron. The percentage of impurities in coal type A is: phosphorus 0.02% and iron 3%. The percentage of impurities in coal type B is: phosphorus 0.05% and iron 5%. How should the two types of coal be mixed to obtain fuel at the lowest possible cost that meets the above requirements?
-
-Assistant:
-# Constraints
-# Ensure fuel requirements are met
-subto fuel_requirement:
-    sum <c> in CoalTypes: x[c] >= min_fuel;
-
-# Impurity limits for phosphorus and iron
-subto impurity_constraints:
-    forall <i> in Impurities do
-        sum <c> in CoalTypes: impurity[c, i] * x[c] <= max_impurity[i] * sum <c> in CoalTypes: x[c];
 [end example]

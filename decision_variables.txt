@@ -8,6 +8,8 @@ The goal is to create **integer decision variables** that represent the number o
 3. **The names of the variables should be clear** and should reflect the item they represent, so that anyone reading the model will easily understand what each variable stands for.
 4. Ensure that each variable is followed by a **comment** that briefly explains what it represents.
 5. Write only correct variables with description. Do not write any additional comenntary.
+6. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+7. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
 
 # EXAMPLES
 

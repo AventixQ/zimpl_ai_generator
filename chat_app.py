@@ -21,6 +21,7 @@ need_to_param = st.checkbox("Generate parameterized code", value=st.session_stat
 st.session_state["need_to_param"] = need_to_param
 
 user_input = st.text_area("Describe your problem:", height=150)
+user_input = user_input.encode('utf-8', errors='ignore').decode('utf-8')
 
 if st.button("Generate code in ZIMPL"):
     if user_input.strip():

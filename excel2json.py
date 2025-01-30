@@ -16,4 +16,4 @@ def excel_to_json(excel_file, json_file):
     with open(json_file, "w") as f:
         json.dump(data, f, indent=4)
 
-excel_to_json("data\\manual_test.xlsx", "manual_test.json")
+excel_to_json("data\\test.xlsx", "test.json")

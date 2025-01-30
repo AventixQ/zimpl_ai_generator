@@ -9,12 +9,15 @@ The goal is to create **logical, inequality-based constraints** that reflect the
 4. **Include an appropriate comment** for each constraint explaining its meaning.
 5. **Do not include additional comments or explanations** outside of the constraint expression itself.
 6. Answer only like in examples, so do not provide full zimpl code.
+7. **Must not** start or end the code with the keyword ```zimpl ``` or ```.
+8. You **must** not use the tags `[start example]` or `[end example]` when responding an answer.
+9. In case of equalities there **must be** two equal signs '=='.
 
 # EXAMPLES
 
 [start example]
 User:
-A bakery produces Whole Wheat and Rye bread with specific resource requirements and profits. Whole Wheat bread uses 2 kg of flour and 1 kg of yeast per loaf, earning 5 Euros profit. Rye bread requires 3 kg of flour and 2 kg of yeast per loaf, yielding 7 Euros profit. With 600 kg of flour and 100 kg of yeast available, the task is to determine the production strategy that maximizes profit.
+A bakery produces Whole Wheat and Rye bread with specific resource requirements and profits. Whole Wheat bread uses 2 kg of flour and 1 kg of yeast per loaf, earning 5 Euros profit. Rye bread requires 3 kg of flour and 2 kg of yeast per loaf, yielding 7 Euros profit. With 600 kg of flour and 100 kg of yeast available, the task is to determine the production strategy that maximizes profit. Use created decision variables: var b1 integer; # Whole Wheat var b2 integer; # Rye. Write only objective as an answer.
 
 Assistant:
 # Constraints
@@ -24,7 +27,7 @@ subto yeast: b1 + 2*b2 <= 100;
 
 [start example]
 User:
-A company produces Standard and Advanced drones. Standard drones require 4 units of materials and 5 hours, yielding 50 Euros profit per unit. Advanced drones need 6 units of materials and 7 hours, generating 100 Euros profit per unit. With 400 units of materials and 300 hours available, the challenge is to determine the production strategy that maximizes profit.
+A company produces Standard and Advanced drones. Standard drones require 4 units of materials and 5 hours, yielding 50 Euros profit per unit. Advanced drones need 6 units of materials and 7 hours, generating 100 Euros profit per unit. With 400 units of materials and 300 hours available, the challenge is to determine the production strategy that maximizes profit. Use created decision variables: var d1 integer; # Standard drones var d2 integer; # Advanced drones. Write only objective as an answer.
 
 Assistant:
 # Constraints
@@ -43,7 +46,17 @@ The revenue per unit is as follows:
 - From Storage 1 to Shop C: $10
 - From Storage 2 to Shop A: $6
 - From Storage 2 to Shop B: $7
-- From Storage 2 to Shop C: $12"
+- From Storage 2 to Shop C: $12
+Use created decision variables:
+var xS1A integer;    # Units shipped from Storage 1 to Shop A
+var xS1B integer;    # Units shipped from Storage 1 to Shop B
+var xS1C integer;    # Units shipped from Storage 1 to Shop C
+var xS2A integer;    # Units shipped from Storage 2 to Shop A
+var xS2B integer;    # Units shipped from Storage 2 to Shop B
+var xS2C integer;    # Units shipped from Storage 2 to Shop C
+
+Write only objective as an answer.
+"
 
 Assistant:
 # Constraints
@@ -56,7 +69,7 @@ subto DC3: xS1C + xS2C >= 130;
 
 [start example]
 User:
-A tailoring workshop makes trousers and jackets. For daily production, it uses two resources: fabric and labor. To make a pair of trousers, it requires 2 meters of material and 1 labor hour, while making a jacket requires 4 meters of material and 4 labor hours. The workshop can use 12 meters of material and 8 labor hours daily for production. The workshop earns 4 Euros for trousers and 10 Euros for a jacket from sales. Create a daily production plan that maximizes profit from sales.
+A tailoring workshop makes trousers and jackets. For daily production, it uses two resources: fabric and labor. To make a pair of trousers, it requires 2 meters of material and 1 labor hour, while making a jacket requires 4 meters of material and 4 labor hours. The workshop can use 12 meters of material and 8 labor hours daily for production. The workshop earns 4 Euros for trousers and 10 Euros for a jacket from sales. Create a daily production plan that maximizes profit from sales. Use created decision variables: var x1; # trousers var x2; # jackets. Write only objective as an answer.
 
 Assistant:
 # Constrains
@@ -66,7 +79,7 @@ subto NB2: x1 + 4*x2 <= 8;
 
 [start example]
 User:
-A doctor wants to combine two food kinds such that the mixture’s vitamin content includes a minimum of 8 elements of vitamin A and ten elements of vitamin C. Food ‘I’ includes 2 vitamin A units per kilogram and 1 vitamin C unit per kilogram. Food ‘II’ has 1 vitamin A unit per kilogram and 2 vitamin C units per kilogram. Food ‘I’ is priced at $5 per kilogram, whereas Food ‘II’ costs $7 per kilogram. Minimize the price of such a combination.
+A doctor wants to combine two food kinds such that the mixture’s vitamin content includes a minimum of 8 elements of vitamin A and ten elements of vitamin C. Food ‘I’ includes 2 vitamin A units per kilogram and 1 vitamin C unit per kilogram. Food ‘II’ has 1 vitamin A unit per kilogram and 2 vitamin C units per kilogram. Food ‘I’ is priced at $5 per kilogram, whereas Food ‘II’ costs $7 per kilogram. Minimize the price of such a combination. Use created decision variables: var x1; # Food 'I' var x2; # Food 'II'. Write only objective as an answer.
 
 Assistant:
 # Constraints
@@ -76,7 +89,7 @@ subto VitaminC: 1*x1 + 2*x2 >= 10;
 
 [start example]
 User:
-An oil refinery purchases two types of crude oil, R1 and R2, at prices of 7000 PLN and 14000 PLN per processing unit, respectively. The fractional distillation process occurring in the rectification tower produces three products. From one processing unit of crude oil R1, 16 tons of gasoline, 20 tons of diesel, and 24 tons of residue are obtained. From one processing unit of crude oil R2, 48 tons of gasoline, 10 tons of diesel, and 14 tons of residue are obtained. How much R1 and R2 should be purchased to produce at least 48000 tons of gasoline and 20000 tons of diesel at the minimum raw material acquisition cost?
+An oil refinery purchases two types of crude oil, R1 and R2, at prices of 7000 PLN and 14000 PLN per processing unit, respectively. The fractional distillation process occurring in the rectification tower produces three products. From one processing unit of crude oil R1, 16 tons of gasoline, 20 tons of diesel, and 24 tons of residue are obtained. From one processing unit of crude oil R2, 48 tons of gasoline, 10 tons of diesel, and 14 tons of residue are obtained. How much R1 and R2 should be purchased to produce at least 48000 tons of gasoline and 20000 tons of diesel at the minimum raw material acquisition cost? Use created decision variables: var x1; # amount of 1st crude oil purchased in tons var x2; # amount of 2nd crude oil purchased in tons. Write only objective as an answer.
 
 Assistant:
 # Constrains
