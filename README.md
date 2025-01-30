@@ -26,12 +26,7 @@ The ZIMPL AI Generator allows users to generate ZIMPL code for optimization prob
 
 **2. ZIMPL Code generator**
 
-The application processes the input and generates:
-
-- .... #TODO
-- Decision variables
-- An objective function
-- Constraints
+The application processes the input and generates hardcoded or parametrized wersion of ZIMPL model.
 
 **3. Interactive Sidebar**
 
